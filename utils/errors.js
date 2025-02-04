@@ -1,0 +1,3 @@
+export const BAD_REQUEST_STATUS_CODE = 400;
+export const NOT_FOUND_STATUS_CODE = 404;
+export const SERVER_ERROR_STATUS_CODE = 500;
