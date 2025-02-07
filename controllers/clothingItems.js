@@ -26,13 +26,14 @@ const getItems = (req, res) => {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
+  const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageUrl })
-    .then((item) =>
-      //console.log(item);
+  ClothingItem.create({ name, weather, imageUrl, owner })
+    .then((item) => {
+      console.log(item);
       //res.send({ data: item });
-      res.status(201).send(item)
-    )
+      res.status(201).send(item);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -72,4 +73,19 @@ const deleteItem = (req, res) => {
     });
 };
 
-module.exports = { getItems, createItem, deleteItem };
+const likeItem = (req, res) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
+    { new: true }
+  );
+//...
+
+const dislikeItem = (req, res) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } }, // remove _id from the array
+    { new: true }
+  );
+
+module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };

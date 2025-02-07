@@ -14,6 +14,12 @@ mongoose
   .catch(console.error);
 
 app.use(express.json());
+app.use((req, res, next) => {
+  req.user = {
+    _id: "67a1a932203adcb0938454fb",
+  };
+  next();
+});
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
