@@ -12,9 +12,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      return res
-        .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: err.message });
+      res.status(SERVER_ERROR_STATUS_CODE).send({ message: err.message });
     });
 };
 
@@ -42,7 +40,7 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { userId } = req.params;
-  User.findByIdAndDelete(userId)
+  ClothingItem.findByIdAndDelete(userId)
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
@@ -66,19 +64,40 @@ const deleteItem = (req, res) => {
     });
 };
 
-const likeItem = (req, res) =>
+const likeItem = (req, res) => {
+  console.log(req.params.itemId);
   ClothingItem.findByIdAndUpdate(
+    console.log(req.params.itemId),
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
-  );
-//...
+  )
+    .orFail(new Error("Item not found"))
+    .then((item) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).send({ data: item });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(SERVER_ERROR_STATUS_CODE).send({ message: "likeItem Error" });
+    });
+};
 
 const dislikeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
-  );
+  )
+    .orFail(new Error("Item not found"))
+    .then((item) => {
+      res.setHeader("Content-Type", "application/json");
+      res.send({ data: item });
+    })
+    .catch((err) => {
+      res
+        .status(SERVER_ERROR_STATUS_CODE)
+        .send({ message: "dislikeItem Error" });
+    });
 
 module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };
