@@ -5,10 +5,7 @@ const {
   SERVER_ERROR_STATUS_CODE,
 } = require("../utils/errors");
 
-//GET /users
-
 const getUsers = (req, res) => {
-  //console.log("IN CONTROLLER");
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {

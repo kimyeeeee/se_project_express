@@ -5,11 +5,6 @@ const {
   SERVER_ERROR_STATUS_CODE,
 } = require("../utils/errors");
 
-//CREATE
-//READ
-//UPDATE
-//DELETE
-
 const getItems = (req, res) => {
   console.log(req);
   console.log(req.body);
@@ -17,7 +12,6 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      //console.error(err);
       return res
         .status(SERVER_ERROR_STATUS_CODE)
         .send({ message: err.message });
@@ -31,7 +25,6 @@ const createItem = (req, res) => {
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       console.log(item);
-      //res.send({ data: item });
       res.status(201).send(item);
     })
     .catch((err) => {
@@ -76,7 +69,7 @@ const deleteItem = (req, res) => {
 const likeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
-    { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   );
 //...
@@ -84,7 +77,7 @@ const likeItem = (req, res) =>
 const dislikeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
-    { $pull: { likes: req.user._id } }, // remove _id from the array
+    { $pull: { likes: req.user._id } },
     { new: true }
   );
 
