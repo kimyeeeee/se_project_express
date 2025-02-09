@@ -75,7 +75,7 @@ const updateLike = (req, res, method) => {
   )
     .orFail(() => {
       const error = new Error("Item ID not found");
-      error.statusCode = NOT_FOUND_ERROR_CODE;
+      error.statusCode = NOT_FOUND_STATUS_CODE;
       throw error;
     })
     .then((item) => {
@@ -84,12 +84,14 @@ const updateLike = (req, res, method) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        res.status(BAD_REQUEST_ERROR_CODE).send({ message: "Invalid item ID" });
-      } else if (err.statusCode === NOT_FOUND_ERROR_CODE) {
-        res.status(NOT_FOUND_ERROR_CODE).send({ message: err.message });
+        res
+          .status(BAD_REQUEST_STATUS_CODE)
+          .send({ message: "Invalid item ID" });
+      } else if (err.statusCode === NOT_FOUND_STATUS_CODE) {
+        res.status(NOT_FOUND_STATUS_CODE).send({ message: err.message });
       } else {
         res
-          .status(INTERNAL_SERVER_ERROR_CODE)
+          .status(INTERNAL_SERVER_STATUS_CODE)
           .send({ message: "An error has occurred on the server" });
       }
     });
