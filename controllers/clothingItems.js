@@ -91,7 +91,7 @@ const updateLike = (req, res, method) => {
         res.status(NOT_FOUND_STATUS_CODE).send({ message: err.message });
       } else {
         res
-          .status(INTERNAL_SERVER_STATUS_CODE)
+          .status(SERVER_ERROR_STATUS_CODE)
           .send({ message: "An error has occurred on the server" });
       }
     });
