@@ -39,8 +39,8 @@ const createItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const { userId } = req.params;
-  ClothingItem.findByIdAndDelete(userId)
+  const { itemId } = req.params;
+  ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
@@ -66,10 +66,11 @@ const deleteItem = (req, res) => {
 
 const updateLike = (req, res, method) => {
   const {
-    params: { id },
+    params: { itemId },
   } = req;
+  console.log(itemId);
   ClothingItem.findByIdAndUpdate(
-    id,
+    itemId,
     { [method]: { likes: req.user._id } },
     { new: true }
   )

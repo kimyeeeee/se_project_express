@@ -7,10 +7,6 @@ router.use("/users", userRouter);
 router.use("/items", clothingItemRouter);
 
 router.use((req, res) => {
-  res.status(500).send({ message: "Router not found" });
-});
-
-router.use((req, res) => {
   res
     .status(NOT_FOUND_STATUS_CODE)
     .send({ message: "Requested resource not found" });
