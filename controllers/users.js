@@ -12,7 +12,7 @@ const getUsers = (req, res) => {
       console.error(err);
       return res
         .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -26,7 +26,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: err.message });
+          .send({ message: "An error has occurred on the server" });
       }
       return res
         .status(SERVER_ERROR_STATUS_CODE)
@@ -56,7 +56,7 @@ const getUser = (req, res) => {
       }
       return res
         .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 

@@ -12,7 +12,9 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      res.status(SERVER_ERROR_STATUS_CODE).send({ message: err.message });
+      res
+        .status(SERVER_ERROR_STATUS_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -34,7 +36,7 @@ const createItem = (req, res) => {
       }
       return res
         .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -60,7 +62,7 @@ const deleteItem = (req, res) => {
       }
       return res
         .status(SERVER_ERROR_STATUS_CODE)
-        .send({ message: err.message });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -101,41 +103,5 @@ const updateLike = (req, res, method) => {
 const likeItem = (req, res) => updateLike(req, res, "$addToSet");
 
 const dislikeItem = (req, res) => updateLike(req, res, "$pull");
-
-// const likeItem = (req, res) => {
-//   console.log(req.params.itemId);
-//   ClothingItem.findByIdAndUpdate(
-//     console.log(req.params.itemId),
-//     req.params.itemId,
-//     { $addToSet: { likes: req.user._id } },
-//     { new: true }
-//   )
-//     .orFail(new Error("Item not found"))
-//     .then((item) => {
-//       res.setHeader("Content-Type", "application/json");
-//       res.status(200).send({ data: item });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       res.status(SERVER_ERROR_STATUS_CODE).send({ message: "likeItem Error" });
-//     });
-// };
-
-// const dislikeItem = (req, res) =>
-//   ClothingItem.findByIdAndUpdate(
-//     req.params.itemId,
-//     { $pull: { likes: req.user._id } },
-//     { new: true }
-//   )
-//     .orFail(new Error("Item not found"))
-//     .then((item) => {
-//       res.setHeader("Content-Type", "application/json");
-//       res.send({ data: item });
-//     })
-//     .catch((err) => {
-//       res
-//         .status(SERVER_ERROR_STATUS_CODE)
-//         .send({ message: "dislikeItem Error" });
-//     });
 
 module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };
