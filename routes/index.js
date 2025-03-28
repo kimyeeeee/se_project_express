@@ -2,14 +2,7 @@ const router = require("express").Router();
 const userRouter = require("./users");
 const clothingItemRouter = require("./clothingItems");
 const { NOT_FOUND_STATUS_CODE } = require("../utils/errors");
-const {
-  createUser,
-  loginUser,
-  updateUserProfile,
-} = require("../controllers/users");
-const { auth } = require("../middlewares/auth");
-const { getItems } = require("../controllers/clothingItems");
-const authRouter = require("../middlewares/auth");
+const { createUser, loginUser } = require("../controllers/users");
 
 router.post("/signup", createUser);
 router.post("/signin", loginUser);

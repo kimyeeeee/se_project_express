@@ -13,7 +13,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => {
       console.log("Items in DB", items);
-      res.send(items);
+      return res.send(items);
     })
     .catch((err) => {
       console.error(err);
@@ -30,7 +30,7 @@ const createItem = (req, res) => {
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       console.log(item);
-      res.status(201).send(item);
+      return res.status(201).send(item);
     })
     .catch((err) => {
       console.error(err);
@@ -55,7 +55,7 @@ const deleteItem = (req, res) => {
       .status(NOT_FOUND_STATUS_CODE)
       .send({ message: "Item ID is required." });
   }
-  ClothingItem.findOne({ _id: itemId })
+  return ClothingItem.findOne({ _id: itemId })
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userID) {
@@ -63,10 +63,13 @@ const deleteItem = (req, res) => {
           .status(FORBIDDEN_STATUS_CODE)
           .send({ message: "You are not the owner of this item" });
       }
-      return ClothingItem.deleteOne({ _id: itemId, owner: userID }).then(() => {
-        console.log(`Item ${itemId} has been successfully deleted.`);
-        res.status(200).send({ message: `Item ${itemId} has been deleted.` });
-      });
+      return ClothingItem.deleteOne({ _id: itemId, owner: userID });
+    })
+    .then(() => {
+      console.log(`Item ${itemId} has been successfully deleted.`);
+      return res
+        .status(200)
+        .send({ message: `Item ${itemId} has been deleted.` });
     })
     .catch((err) => {
       console.error(err);
@@ -104,22 +107,20 @@ const updateLike = (req, res, method) => {
       error.statusCode = NOT_FOUND_STATUS_CODE;
       throw error;
     })
-    .then((item) => {
-      res.send(item);
-    })
+    .then((item) => res.send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        res
+        return res
           .status(BAD_REQUEST_STATUS_CODE)
           .send({ message: "Invalid item ID" });
-      } else if (err.statusCode === NOT_FOUND_STATUS_CODE) {
-        res.status(NOT_FOUND_STATUS_CODE).send({ message: err.message });
-      } else {
-        res
-          .status(SERVER_ERROR_STATUS_CODE)
-          .send({ message: "An error has occurred on the server" });
       }
+      if (err.statusCode === NOT_FOUND_STATUS_CODE) {
+        return res.status(NOT_FOUND_STATUS_CODE).send({ message: err.message });
+      }
+      return res
+        .status(SERVER_ERROR_STATUS_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 

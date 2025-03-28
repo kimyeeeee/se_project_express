@@ -1,5 +1,5 @@
 export const BAD_REQUEST_STATUS_CODE = 400;
-export const INVALID_EMAIL_OR_PW = 401;
+export const INVALID_STATUS_CODE = 401;
 export const FORBIDDEN_STATUS_CODE = 403;
 export const NOT_FOUND_STATUS_CODE = 404;
 export const CONFLICT_STATUS_CODE = 409;
