@@ -3,6 +3,7 @@ const {
   BAD_REQUEST_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
   SERVER_ERROR_STATUS_CODE,
+  FORBIDDEN_STATUS_CODE,
 } = require("../utils/errors");
 
 const getItems = (req, res) => {
@@ -10,9 +11,13 @@ const getItems = (req, res) => {
   console.log(req.body);
 
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => {
+      console.log("Items in DB", items);
+      res.send(items);
+    })
     .catch((err) => {
-      res
+      console.error(err);
+      return res
         .status(SERVER_ERROR_STATUS_CODE)
         .send({ message: "An error has occurred on the server" });
     });
@@ -42,9 +47,27 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndDelete(itemId)
+  console.log(itemId);
+  const { _id: userID } = req.user;
+
+  if (!itemId) {
+    return res
+      .status(NOT_FOUND_STATUS_CODE)
+      .send({ message: "Item ID is required." });
+  }
+  ClothingItem.findOne({ _id: itemId })
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      if (item.owner.toString() !== userID) {
+        return res
+          .status(FORBIDDEN_STATUS_CODE)
+          .send({ message: "You are not the owner of this item" });
+      }
+      return ClothingItem.deleteOne({ _id: itemId, owner: userID }).then(() => {
+        console.log(`Item ${itemId} has been successfully deleted.`);
+        res.status(200).send({ message: `Item ${itemId} has been deleted.` });
+      });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -104,4 +127,10 @@ const likeItem = (req, res) => updateLike(req, res, "$addToSet");
 
 const dislikeItem = (req, res) => updateLike(req, res, "$pull");
 
-module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };
+module.exports = {
+  getItems,
+  createItem,
+  deleteItem,
+  likeItem,
+  dislikeItem,
+};
