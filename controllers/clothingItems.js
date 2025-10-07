@@ -7,12 +7,8 @@ const {
 } = require("../utils/errors");
 
 const getItems = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
   ClothingItem.find({})
     .then((items) => {
-      console.log("Items in DB", items);
       return res.send(items);
     })
     .catch((err) => {
@@ -29,7 +25,6 @@ const createItem = (req, res) => {
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
-      console.log(item);
       return res.status(201).send(item);
     })
     .catch((err) => {
@@ -47,7 +42,7 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log(itemId);
+
   const { _id: userID } = req.user;
 
   if (!itemId) {
@@ -96,7 +91,7 @@ const updateLike = (req, res, method) => {
   const {
     params: { itemId },
   } = req;
-  console.log(itemId);
+
   ClothingItem.findByIdAndUpdate(
     itemId,
     { [method]: { likes: req.user._id } },

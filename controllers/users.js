@@ -87,7 +87,7 @@ const getCurrentUser = (req, res) => {
 
 const loginUser = (req, res) => {
   const { email, password } = req.body;
-  console.log("log in request received", email, "with pw", password);
+
   if (!email || !password) {
     return res
       .status(BAD_REQUEST_STATUS_CODE)
@@ -95,7 +95,6 @@ const loginUser = (req, res) => {
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      console.log("user object from the login controller", user);
       // authentication successful if user in log
       if (!user) {
         return res
@@ -129,7 +128,6 @@ const updateUserProfile = (req, res) => {
     runValidators: true,
   })
     .then((user) => {
-      console.log(user);
       if (!user) {
         return res
           .status(NOT_FOUND_STATUS_CODE)
